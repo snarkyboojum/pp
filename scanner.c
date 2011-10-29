@@ -28,7 +28,17 @@ typedef struct token {
 
 
 char SEPARATOR = ' ';
+char NEWLINE   = '\n';
 
+
+int is_space (char c) {
+    if (c == SEPARATOR || c == NEWLINE) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+}
 
 int
 scan(char* file) {
@@ -57,19 +67,19 @@ scan(char* file) {
 
         printf("%c", c);
 
-        if (c != SEPARATOR) {
+        if ( ! is_space(c) ) {
             // start of a token
-            if (last_seen == SEPARATOR || file_pos == 0) {
+            if ( is_space(last_seen) || file_pos == 0) {
                 token_pos = 0;
                 t = (token*) malloc(sizeof(token));
                 t->start_pos = file_pos;
             }
-
+            // middle of a token
             t->data[token_pos] = c;
             token_pos++;
         }
         // end of a token
-        else if (c == SEPARATOR && (last_seen != SEPARATOR && file_pos !=0)) {
+        else if (is_space(c) && (! is_space(last_seen) && file_pos !=0)) {
             t->end_pos = file_pos;
             tokens[token_count] = t;
             token_count++;
@@ -78,6 +88,8 @@ scan(char* file) {
         last_seen = c;
         file_pos++;
     }
+
+    fclose(fh);
 
     printf("Number of tokens found: %d\n", token_count);
 
@@ -96,7 +108,6 @@ scan(char* file) {
         printf("\n");
     }
 
-    fclose(fh);
     return 0;
 }
 

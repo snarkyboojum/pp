@@ -11,7 +11,8 @@
 int scan(char *file);
 int is_space(char c);
 
-typedef enum token_type {
+typedef enum token_type
+{
     type       = 0,
     ident      = 1,
     value      = 2,
@@ -20,7 +21,8 @@ typedef enum token_type {
     unknown    = 99,
 } token_type;
 
-typedef struct token {
+typedef struct token
+{
     int start_pos;
     int end_pos;
     char data[MAX_TOKEN_LENGTH];
@@ -31,9 +33,9 @@ typedef struct token {
 char SEPARATOR = ' ';
 char NEWLINE   = '\n';
 
-
 int
-is_space (char c) {
+is_space (char c)
+{
     if (c == SEPARATOR || c == NEWLINE) {
         return 1;
     }
@@ -43,7 +45,8 @@ is_space (char c) {
 }
 
 int
-scan(char* file) {
+scan(char* file)
+{
     int file_pos    = 0;
     int token_count = 0;
     int token_pos   = 0;
@@ -69,9 +72,9 @@ scan(char* file) {
 
         printf("%c", c);
 
-        if ( ! is_space(c) ) {
+        if (! is_space(c)) {
             // start of a token
-            if ( is_space(last_seen) || file_pos == 0) {
+            if (is_space(last_seen) || file_pos == 0) {
                 token_pos = 0;
                 t = (token*) malloc(sizeof(token));
                 t->start_pos = file_pos;
@@ -114,8 +117,8 @@ scan(char* file) {
 }
 
 int
-main(int argc, char **argv) {
-
+main(int argc, char **argv)
+{
     int retcode = 0;
 
     if (argv[1] == NULL) {

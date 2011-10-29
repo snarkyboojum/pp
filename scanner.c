@@ -9,6 +9,7 @@
 #define MAX_TOKEN_NUM 1024
 
 int scan(char *file);
+int is_space(char c);
 
 typedef enum token_type {
     type       = 0,
@@ -31,7 +32,8 @@ char SEPARATOR = ' ';
 char NEWLINE   = '\n';
 
 
-int is_space (char c) {
+int
+is_space (char c) {
     if (c == SEPARATOR || c == NEWLINE) {
         return 1;
     }

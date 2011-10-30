@@ -1,35 +1,8 @@
 /*
- * A brain-dead scanner
+ * A brain-dead tokeniser
  */
 
-#import <stdio.h>
-#import <stdlib.h>
-
-#define MAX_TOKEN_LENGTH 128
-#define MAX_TOKEN_NUM 1024
-
-int scan(char *file);
-int is_whitespace(char c);
-int is_terminator(char c);
-int is_delimiter(char c);
-
-typedef enum token_type
-{
-    type       = 0,
-    ident      = 1,
-    value      = 2,
-    operator   = 3,
-    terminator = 4,
-    unknown    = 99,
-} token_type;
-
-typedef struct token
-{
-    int start_pos;
-    int end_pos;
-    char data[MAX_TOKEN_LENGTH];
-    token_type type;
-} token;
+#import "tokenise.h"
 
 
 int
@@ -78,16 +51,15 @@ is_double_delimiter(char c, char nc)
 }
 
 int
-scan(char* file)
+tokenise(char *file, token **tokens)
 {
     int file_pos    = 0;
     int token_count = 0;
     int token_pos   = 0;
 
     char c;
-    token *t = NULL;
-    token *tokens[MAX_TOKEN_NUM];
     FILE *fh;
+    token *t = NULL;
 
     fh = fopen(file, "r");
 
@@ -152,7 +124,7 @@ scan(char* file)
                 t->start_pos = file_pos;
                 token_pos = 0;
             }
-            // slurp char up
+            // slurp char up 
             t->data[token_pos] = c;
             token_pos++;
         }
@@ -162,37 +134,6 @@ scan(char* file)
 
     fclose(fh);
 
-    printf("Number of tokens found: %d\n", token_count);
-
-    int i;
-    for (i = 0; i < token_count; i++) {
-        token *t = tokens[i];
-        printf("[%d]: ", i);
-
-        int token_length = t->end_pos - t->start_pos;
-        printf("%d: ", token_length);
-
-        int j;
-        for (j = 0; j <= token_length; j++) {
-            printf("%c", t->data[j]);
-        }
-        printf("\n");
-    }
-
-    return 0;
+    return token_count;
 }
 
-int
-main(int argc, char **argv)
-{
-    int retcode = 0;
-
-    if (argv[1] == NULL) {
-        printf("Need a source file\n");
-    }
-    else {
-        retcode = scan(argv[1]);
-    }
-
-    return retcode;
-}

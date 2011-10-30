@@ -13,4 +13,7 @@ parse.o: parse.c
 	gcc -Wall -c parse.c
 
 clean:
-	rm -rf *.o parser
+	rm -rf *.o
+
+cleanall:
+	rm -rf *.o parse

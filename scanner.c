@@ -53,7 +53,7 @@ is_terminator(char c)
 int
 is_delimiter(char c)
 {
-    if (is_whitespace(c) || c == '!' || c == '<' || c == '>' || c == ';' || c == '=' || c == '{' || c == '}' || c == '(' || c == ')' || c == EOF)
+    if (is_whitespace(c) || c == '!' || c == '<' || c == '>' || c == ';' || c == '=' || c == '{' || c == '}' || c == '(' || c == ')' || c == '&' || c == '|' || c == EOF)
         return 1;
     else
         return 0;
@@ -63,6 +63,10 @@ int
 is_double_delimiter(char c, char nc)
 {
     if ((c == '<' || c == '>' || c == '!' || c == '=') && nc == '=')
+        return 1;
+    else if (c == '&' && nc == '&')
+        return 1;
+    else if (c == '|' && nc == '|')
         return 1;
     else
         return 0;

@@ -9,7 +9,9 @@
 #define MAX_TOKEN_NUM 1024
 
 int scan(char *file);
-int is_separator(char c);
+int is_whitespace(char c);
+int is_terminator(char c);
+int is_delimiter(char c);
 
 typedef enum token_type
 {
@@ -30,18 +32,31 @@ typedef struct token
 } token;
 
 
-char SPACE = ' ';
-char NEWLINE   = '\n';
+int
+is_whitespace(char c)
+{
+    if (c == ' ' || c == '\n')
+        return 1;
+    else
+        return 0;
+}
 
 int
-is_separator (char c)
+is_terminator(char c)
 {
-    if (c == SPACE || c == NEWLINE) {
+    if (c == ';')
         return 1;
-    }
-    else {
+    else
         return 0;
-    }
+}
+
+int
+is_delimiter(char c)
+{
+    if (is_whitespace(c) || c == ';' || c == '=' || c == '{' || c == '}' || c == '(' || c == ')' || c == EOF)
+        return 1;
+    else
+        return 0;
 }
 
 int
@@ -52,9 +67,7 @@ scan(char* file)
     int token_pos   = 0;
 
     char c;
-    char last_seen;
-
-    token *t;
+    token *t = NULL;
     token *tokens[MAX_TOKEN_NUM];
     FILE *fh;
 
@@ -68,29 +81,56 @@ scan(char* file)
         printf("Scanning file: %s\n", file);
     }
 
-    while ((c = getc(fh)) != EOF) {
 
-        printf("%c", c);
+    while ((c = getc(fh))) {
 
-        if (! is_separator(c)) {
-            // start of a token
-            if (is_separator(last_seen) || file_pos == 0) {
+        if (c != EOF)
+            printf("%c", c);
+
+        // we're outside a token
+        if (is_delimiter(c)) {
+
+            // we're fallen off the end of a token
+            if (t != NULL) {
+                t->end_pos = file_pos;
+                tokens[token_count] = t;
+                token_count++;
+                t = NULL;
+            }
+
+            // build a token for the delimiter
+            // (only works for single char delimiters :))
+            if (! is_whitespace(c) && c != EOF) {
                 token_pos = 0;
                 t = (token*) malloc(sizeof(token));
+
+                t->data[token_pos] = c;
                 t->start_pos = file_pos;
+                t->end_pos = file_pos;
+
+                tokens[token_count] = t;
+                token_count++;
+                t = NULL;
             }
-            // middle of a token
+            else {
+                if (c == EOF)
+                    break;
+                // we skip whitespace
+            }
+        }
+        // we're in a token
+        else {
+            // this is a new token
+            if (t == NULL) {
+                t = (token*) malloc(sizeof(token));
+                t->start_pos = file_pos;
+                token_pos = 0;
+            }
+            // slurp char up
             t->data[token_pos] = c;
             token_pos++;
         }
-        // end of a token
-        else if (is_separator(c) && (! is_separator(last_seen) && file_pos !=0)) {
-            t->end_pos = file_pos;
-            tokens[token_count] = t;
-            token_count++;
-        }
 
-        last_seen = c;
         file_pos++;
     }
 

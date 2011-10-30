@@ -1,1 +1,3 @@
 A playpen for parsing :)
+
+Implement a brain-dead scanner/tokeniser, a naive AST, and a underwhelmingly simplistic runtime.

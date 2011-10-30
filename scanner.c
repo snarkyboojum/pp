@@ -9,7 +9,7 @@
 #define MAX_TOKEN_NUM 1024
 
 int scan(char *file);
-int is_space(char c);
+int is_separator(char c);
 
 typedef enum token_type
 {
@@ -30,13 +30,13 @@ typedef struct token
 } token;
 
 
-char SEPARATOR = ' ';
+char SPACE = ' ';
 char NEWLINE   = '\n';
 
 int
-is_space (char c)
+is_separator (char c)
 {
-    if (c == SEPARATOR || c == NEWLINE) {
+    if (c == SPACE || c == NEWLINE) {
         return 1;
     }
     else {
@@ -72,9 +72,9 @@ scan(char* file)
 
         printf("%c", c);
 
-        if (! is_space(c)) {
+        if (! is_separator(c)) {
             // start of a token
-            if (is_space(last_seen) || file_pos == 0) {
+            if (is_separator(last_seen) || file_pos == 0) {
                 token_pos = 0;
                 t = (token*) malloc(sizeof(token));
                 t->start_pos = file_pos;
@@ -84,7 +84,7 @@ scan(char* file)
             token_pos++;
         }
         // end of a token
-        else if (is_space(c) && (! is_space(last_seen) && file_pos !=0)) {
+        else if (is_separator(c) && (! is_separator(last_seen) && file_pos !=0)) {
             t->end_pos = file_pos;
             tokens[token_count] = t;
             token_count++;

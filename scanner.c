@@ -53,7 +53,16 @@ is_terminator(char c)
 int
 is_delimiter(char c)
 {
-    if (is_whitespace(c) || c == ';' || c == '=' || c == '{' || c == '}' || c == '(' || c == ')' || c == EOF)
+    if (is_whitespace(c) || c == '!' || c == '<' || c == '>' || c == ';' || c == '=' || c == '{' || c == '}' || c == '(' || c == ')' || c == EOF)
+        return 1;
+    else
+        return 0;
+}
+
+int
+is_double_delimiter(char c, char nc)
+{
+    if ((c == '<' || c == '>' || c == '!' || c == '=') && nc == '=')
         return 1;
     else
         return 0;
@@ -106,7 +115,16 @@ scan(char* file)
 
                 t->data[token_pos] = c;
                 t->start_pos = file_pos;
-                t->end_pos = file_pos;
+
+                // peek ahead
+                char nc = getc(fh);
+
+                if (is_double_delimiter(c, nc))
+                    t->data[++token_pos] = nc;
+                else
+                    ungetc(nc, fh);
+
+                t->end_pos = file_pos + (token_pos + 1);
 
                 tokens[token_count] = t;
                 token_count++;

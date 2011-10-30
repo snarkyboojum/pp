@@ -108,7 +108,6 @@ scan(char* file)
             }
 
             // build a token for the delimiter
-            // (only works for single char delimiters :))
             if (! is_whitespace(c) && c != EOF) {
                 token_pos = 0;
                 t = (token*) malloc(sizeof(token));
